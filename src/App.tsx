@@ -211,18 +211,18 @@ const App: React.FC = () => {
                 ease: 'none'
             }, 0)
             .to('.panels-container', {
-                backgroundColor: '#231713', // Warm dark copper
+                backgroundColor: '#121212', // Neutral dark grey
                 ease: 'none'
             }, 0)
             .from('.history-text-side', { opacity: 0, y: 40, duration: 0.5 }, 0.3)
             .from('.history-visual-side', { opacity: 0, scale: 0.95, duration: 0.5 }, 0.3);
 
-            // Transition background color from charcoal black to deep ember copper when reaching Menu
+            // Transition background color from pure black to slightly lighter dark grey when reaching Menu
             gsap.fromTo(document.body, 
-                { backgroundColor: '#120d0b', color: '#f7ede8' },
+                { backgroundColor: '#050505', color: '#ffffff' },
                 {
-                    backgroundColor: '#3d1a0e', // Deep warm copper
-                    color: '#f7ede8',
+                    backgroundColor: '#0f0f0f', // Neutral dark grey
+                    color: '#ffffff',
                     scrollTrigger: {
                         trigger: '#menu',
                         start: 'top 60%',

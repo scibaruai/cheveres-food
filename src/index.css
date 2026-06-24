@@ -4,14 +4,14 @@
 
 /* --- CSS VARIABLES (Design Tokens) --- */
 :root {
-    --bg-dark: #120d0b;         /* Charcoal black with warm brown tint */
-    --card-bg: #231713;         /* Warm dark copper brown */
-    --card-bg-hover: #31211b;   /* Slightly lighter copper on hover */
-    --accent-orange: #ff6f00;   /* Vibrant orange primary */
-    --accent-orange-hover: #ff851a;
-    --gold-cheese: #ffb703;     /* Cheese gold yellow */
-    --text-light: #f7ede8;      /* Cream white */
-    --text-muted: #baa9a2;      /* Soft warm gray */
+    --bg-dark: #050505;         /* Pure neutral black */
+    --card-bg: #121212;         /* Neutral dark card background */
+    --card-bg-hover: #1c1c1c;   /* Slightly lighter neutral on hover */
+    --accent-orange: #ff5500;   /* Very vibrant orange primary */
+    --accent-orange-hover: #ff7722;
+    --gold-cheese: #ffaa00;     /* Cheese gold yellow */
+    --text-light: #ffffff;      /* Pure white */
+    --text-muted: #a3a3a3;      /* Neutral gray */
     --white: #ffffff;
     
     --card-shadow: 0 12px 40px rgba(0, 0, 0, 0.55);
@@ -359,6 +359,24 @@ button {
     display: flex;
     justify-content: center;
     align-items: center;
+    min-width: 0;
+    overflow: hidden;
+}
+
+#hero-3d-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    overflow: hidden;
+}
+
+#hero-3d-wrapper canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100% !important;
+    height: 100% !important;
 }
 
 .scroll-indicator-text {

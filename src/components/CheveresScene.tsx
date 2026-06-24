@@ -9,19 +9,18 @@ interface CheveresModelProps {
 
 const CheveresModel: React.FC<CheveresModelProps> = ({ scrollFraction, mouse }) => {
     const groupRef = useRef<THREE.Group>(null);
-    const upperCheeseRef = useRef<THREE.Mesh>(null);
-    const lowerCheeseRef = useRef<THREE.Mesh>(null);
+    const upperGroupRef = useRef<THREE.Group>(null);
+    const lowerGroupRef = useRef<THREE.Group>(null);
     const cheesePullRef = useRef<THREE.Mesh>(null);
-    const doughGroupRef = useRef<THREE.Group>(null);
     const particlesRef = useRef<THREE.Points>(null);
 
     // 1. Materials Configuration
-    const doughStripeMat = useMemo(() => new THREE.MeshPhysicalMaterial({
-        color: 0xdf9a44,     // Warm golden-brown
-        roughness: 0.55,
-        metalness: 0.05,
-        clearcoat: 0.4,
-        clearcoatRoughness: 0.25
+    const doughMat = useMemo(() => new THREE.MeshPhysicalMaterial({
+        color: 0xdf9a44,     // Warm golden fried dough
+        roughness: 0.45,
+        metalness: 0.02,
+        clearcoat: 0.6,
+        clearcoatRoughness: 0.2
     }), []);
 
     const cheeseMat = useMemo(() => new THREE.MeshPhysicalMaterial({
@@ -32,25 +31,7 @@ const CheveresModel: React.FC<CheveresModelProps> = ({ scrollFraction, mouse }) 
         clearcoatRoughness: 0.15
     }), []);
 
-    // 2. Torus wraps data (helical representation)
-    const torusCount = 7;
-    const torusPositions = useMemo(() => {
-        const list = [];
-        for (let i = 0; i < torusCount; i++) {
-            list.push({
-                yInit: -0.65 + i * 0.22,
-                rotX: Math.PI / 2 + 0.22, // Slanted wrap
-                rotY: 0.15 + i * 0.1,
-                rotZ: (i % 2 === 0 ? 0.1 : -0.1)
-            });
-        }
-        return list;
-    }, []);
-
-    // Torus meshes refs
-    const torusesRef = useRef<Array<THREE.Mesh | null>>([]);
-
-    // 3. Cheese cubes particles
+    // 2. Cheese cubes particles
     const cubeCount = 12;
     const cubeData = useMemo(() => {
         const list = [];
@@ -66,7 +47,6 @@ const CheveresModel: React.FC<CheveresModelProps> = ({ scrollFraction, mouse }) 
                     (Math.random() - 0.5) * 0.03
                 ] as [number, number],
                 driftSpeed: 0.15 + Math.random() * 0.35,
-                initialX: 0
             });
         }
         return list;
@@ -74,8 +54,8 @@ const CheveresModel: React.FC<CheveresModelProps> = ({ scrollFraction, mouse }) 
 
     const cubesRef = useRef<Array<THREE.Mesh | null>>([]);
 
-    // 4. Sparkles particles setup
-    const particleCount = 35;
+    // 3. Sparkles particles setup (clean glowing white/yellow magic dots instead of fire embers)
+    const particleCount = 45;
     const [particlePositions, particleVelocities] = useMemo(() => {
         const positions = new Float32Array(particleCount * 3);
         const velocities = new Float32Array(particleCount * 3);
@@ -84,9 +64,25 @@ const CheveresModel: React.FC<CheveresModelProps> = ({ scrollFraction, mouse }) 
             positions[idx] = (Math.random() - 0.5) * 6; // X
             positions[idx + 1] = (Math.random() - 0.5) * 6; // Y
             positions[idx + 2] = (Math.random() - 0.5) * 4; // Z
-            velocities[idx + 1] = 0.008 + Math.random() * 0.02; // rise speed
+            velocities[idx + 1] = 0.006 + Math.random() * 0.015; // rise speed
         }
         return [positions, velocities];
+    }, []);
+
+    // 4. Crimp teeth calculations for round pastelito
+    const crimpCount = 36;
+    const crimps = useMemo(() => {
+        const list = [];
+        for (let i = 0; i < crimpCount; i++) {
+            const angle = (i / crimpCount) * Math.PI * 2;
+            const r = 0.95;
+            list.push({
+                x: Math.cos(angle) * r,
+                z: Math.sin(angle) * r,
+                rotationY: -angle
+            });
+        }
+        return list;
     }, []);
 
     // 5. Animation loop Hook
@@ -95,73 +91,55 @@ const CheveresModel: React.FC<CheveresModelProps> = ({ scrollFraction, mouse }) 
 
         // 1. Mouse cursor hover tilt & base rotation
         if (groupRef.current) {
-            const targetRotY = t * 0.12 + mouse.x * 0.45;
+            const targetRotY = t * 0.15 + mouse.x * 0.45;
             const targetRotX = 0.2 + mouse.y * 0.35;
             
             groupRef.current.rotation.y += (targetRotY - groupRef.current.rotation.y) * 0.05;
             groupRef.current.rotation.x += (targetRotX - groupRef.current.rotation.x) * 0.05;
         }
 
-        // 2. Separation logic on scroll (packed at bottom, exploded at top/initial)
-        // At scrollFraction = 0 (top of page), separation is 1.0 (fully exploded)
-        // At scrollFraction = 1.0, it collapses together completely (separation = 0.0)
-        const targetSeparation = Math.max(0.0, 1.0 - scrollFraction * 3.0);
+        // 2. Separation logic on scroll
+        const targetSeparation = Math.max(0.0, 1.0 - scrollFraction * 2.8);
 
-        // Animate cheese split
-        // Upper cheese cylinder moves up
-        if (upperCheeseRef.current) {
-            upperCheeseRef.current.position.y = 0.35 + targetSeparation * 1.1;
+        // Animate upper group (top shell of pastelito)
+        if (upperGroupRef.current) {
+            upperGroupRef.current.position.y = 0.08 + targetSeparation * 1.35;
+            // Slight tilt as it separates
+            upperGroupRef.current.rotation.z = targetSeparation * 0.15;
+            upperGroupRef.current.rotation.x = targetSeparation * 0.08;
         }
-        // Lower cheese cylinder moves down
-        if (lowerCheeseRef.current) {
-            lowerCheeseRef.current.position.y = -0.35 - targetSeparation * 1.1;
+
+        // Animate lower group (bottom shell of pastelito)
+        if (lowerGroupRef.current) {
+            lowerGroupRef.current.position.y = -0.08 - targetSeparation * 1.35;
+            lowerGroupRef.current.rotation.z = -targetSeparation * 0.15;
+            lowerGroupRef.current.rotation.x = -targetSeparation * 0.08;
         }
 
         // Animate cheese pull connecting the two halves
         if (cheesePullRef.current) {
-            const currentSep = targetSeparation * 1.1;
+            const currentSep = targetSeparation * 1.35;
             if (currentSep > 0.05) {
                 cheesePullRef.current.visible = true;
                 
                 // Scale Y to match length between ends
-                const yLength = 0.7 + currentSep * 2.2;
+                const yLength = 0.16 + currentSep * 2.7;
                 cheesePullRef.current.scale.y = yLength;
                 
                 // Thin out X & Z based on stretch distance
-                const thinness = 1.0 / (1.0 + currentSep * 2.6);
-                cheesePullRef.current.scale.x = thinness;
-                cheesePullRef.current.scale.z = thinness;
+                const thinness = 1.0 / (1.0 + currentSep * 3.5);
+                cheesePullRef.current.scale.x = thinness * 0.85;
+                cheesePullRef.current.scale.z = thinness * 0.85;
             } else {
                 cheesePullRef.current.visible = false;
             }
         }
 
-        // Animate outer dough wraps (toruses)
-        torusesRef.current.forEach((torus, i) => {
-            if (!torus) return;
-            const posData = torusPositions[i];
-            if (!posData) return;
-            
-            const currentSep = targetSeparation * 1.1;
-            
-            // Radial expansion: torus slides outwards
-            const angle = (i / torusCount) * Math.PI * 2;
-            torus.position.x = Math.cos(angle) * currentSep * 0.75;
-            torus.position.z = Math.sin(angle) * currentSep * 0.75;
-            
-            // Y separation
-            torus.position.y = posData.yInit * (1.0 + currentSep * 1.25);
-            
-            // Slanted rotation updates
-            torus.rotation.x = posData.rotX + t * 0.04 + currentSep * 0.15;
-            torus.rotation.y = posData.rotY + t * 0.02 + currentSep * 0.15;
-        });
-
         // 3. Animate drifting cheese cubes
         cubesRef.current.forEach((cube, i) => {
             if (!cube) return;
             const data = cubeData[i];
-            cube.position.y += data.driftSpeed * 0.007;
+            cube.position.y += data.driftSpeed * 0.008;
             cube.position.x = data.pos[0] + Math.sin(t * data.driftSpeed) * 0.15;
             cube.rotation.x += data.rotSpeed[0];
             cube.rotation.y += data.rotSpeed[1];
@@ -174,7 +152,7 @@ const CheveresModel: React.FC<CheveresModelProps> = ({ scrollFraction, mouse }) 
             }
         });
 
-        // 4. Animate floating golden sparkles
+        // 4. Animate floating clean sparkles
         if (particlesRef.current) {
             const posAttr = particlesRef.current.geometry.attributes.position as THREE.BufferAttribute;
             const positions = posAttr.array as Float32Array;
@@ -186,51 +164,89 @@ const CheveresModel: React.FC<CheveresModelProps> = ({ scrollFraction, mouse }) 
                 }
             }
             posAttr.needsUpdate = true;
-            particlesRef.current.rotation.y += 0.0005;
+            particlesRef.current.rotation.y += 0.0008;
         }
 
         // Parallax height shift
         if (groupRef.current) {
-            groupRef.current.position.y = 0.25 - scrollFraction * 1.3;
+            groupRef.current.position.y = 0.2 - scrollFraction * 1.2;
         }
     });
 
     return (
-        <group ref={groupRef} scale={[1.15, 1.15, 1.15]} rotation={[0.2, 0.4, -0.2]}>
-            {/* INNER MOZZARELLA CHEESE STICK */}
-            {/* Upper Cheese Half */}
-            <mesh ref={upperCheeseRef} castShadow receiveShadow>
-                <cylinderGeometry args={[0.3, 0.3, 0.7, 32]} />
-                <primitive object={cheeseMat} attach="material" />
-            </mesh>
-
-            {/* Lower Cheese Half */}
-            <mesh ref={lowerCheeseRef} castShadow receiveShadow>
-                <cylinderGeometry args={[0.3, 0.3, 0.7, 32]} />
-                <primitive object={cheeseMat} attach="material" />
-            </mesh>
-
-            {/* Connecting Cheese Pull (Stretchy) */}
+        <group ref={groupRef} scale={[1.4, 1.4, 1.4]} rotation={[0.15, 0.4, -0.1]}>
+            {/* STRETCHY CHEESE PULL IN CENTER */}
             <mesh ref={cheesePullRef} position={[0, 0, 0]} castShadow receiveShadow>
-                <cylinderGeometry args={[0.3, 0.3, 1.0, 32]} />
+                <cylinderGeometry args={[0.42, 0.42, 1.0, 32]} />
                 <primitive object={cheeseMat} attach="material" />
             </mesh>
 
-            {/* OUTER HELICAL DOUGH WRAPS */}
-            <group ref={doughGroupRef}>
-                {torusPositions.map((pos, idx) => (
-                    <mesh
-                        key={idx}
-                        ref={(el) => { torusesRef.current[idx] = el; }}
-                        position={[0, pos.yInit, 0]}
-                        rotation={[pos.rotX, pos.rotY, pos.rotZ]}
+            {/* UPPER PASTELITO HALF */}
+            <group ref={upperGroupRef}>
+                {/* Upper Puffed Dough Dome */}
+                <mesh position={[0, 0.04, 0]} scale={[1, 0.35, 1]} castShadow receiveShadow>
+                    <sphereGeometry args={[0.9, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2]} />
+                    <primitive object={doughMat} attach="material" />
+                </mesh>
+                
+                {/* Upper Rim Plate (Flat seal border) */}
+                <mesh position={[0, 0.02, 0]} castShadow receiveShadow>
+                    <cylinderGeometry args={[1.0, 1.0, 0.04, 32]} />
+                    <primitive object={doughMat} attach="material" />
+                </mesh>
+
+                {/* Upper Crimp teeth around border */}
+                {crimps.map((crimp, idx) => (
+                    <mesh 
+                        key={idx} 
+                        position={[crimp.x, 0.03, crimp.z]} 
+                        rotation={[0, crimp.rotationY, 0]}
                         castShadow
-                        receiveShadow
                     >
-                        <torusGeometry args={[0.35, 0.075, 12, 32]} />
-                        <primitive object={doughStripeMat} attach="material" />
+                        <boxGeometry args={[0.05, 0.02, 0.08]} />
+                        <primitive object={doughMat} attach="material" />
                     </mesh>
                 ))}
+
+                {/* Inner cheese showing at separation point */}
+                <mesh position={[0, -0.01, 0]} castShadow>
+                    <cylinderGeometry args={[0.42, 0.42, 0.05, 32]} />
+                    <primitive object={cheeseMat} attach="material" />
+                </mesh>
+            </group>
+
+            {/* LOWER PASTELITO HALF */}
+            <group ref={lowerGroupRef}>
+                {/* Lower Puffed Dough Dome */}
+                <mesh position={[0, -0.04, 0]} scale={[1, 0.35, 1]} castShadow receiveShadow>
+                    <sphereGeometry args={[0.9, 32, 16, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2]} />
+                    <primitive object={doughMat} attach="material" />
+                </mesh>
+
+                {/* Lower Rim Plate (Flat seal border) */}
+                <mesh position={[0, -0.02, 0]} castShadow receiveShadow>
+                    <cylinderGeometry args={[1.0, 1.0, 0.04, 32]} />
+                    <primitive object={doughMat} attach="material" />
+                </mesh>
+
+                {/* Lower Crimp teeth around border */}
+                {crimps.map((crimp, idx) => (
+                    <mesh 
+                        key={idx} 
+                        position={[crimp.x, -0.03, crimp.z]} 
+                        rotation={[0, crimp.rotationY, 0]}
+                        castShadow
+                    >
+                        <boxGeometry args={[0.05, 0.02, 0.08]} />
+                        <primitive object={doughMat} attach="material" />
+                    </mesh>
+                ))}
+
+                {/* Inner cheese showing at separation point */}
+                <mesh position={[0, 0.01, 0]} castShadow>
+                    <cylinderGeometry args={[0.42, 0.42, 0.05, 32]} />
+                    <primitive object={cheeseMat} attach="material" />
+                </mesh>
             </group>
 
             {/* DRIFTING CHEESE CUBES */}
@@ -241,9 +257,9 @@ const CheveresModel: React.FC<CheveresModelProps> = ({ scrollFraction, mouse }) 
                     position={cube.pos}
                     castShadow
                 >
-                    <boxGeometry args={[0.12, 0.12, 0.12]} />
+                    <boxGeometry args={[0.13, 0.13, 0.13]} />
                     <meshPhysicalMaterial
-                        color={0xffbe00} // Mozzarella yellow
+                        color={0xffbe00} // Cheese yellow
                         roughness={0.4}
                         metalness={0.05}
                         clearcoat={0.7}
@@ -251,7 +267,7 @@ const CheveresModel: React.FC<CheveresModelProps> = ({ scrollFraction, mouse }) 
                 </mesh>
             ))}
 
-            {/* HEAT FIRE/GOLDEN EMBER SPARKLES */}
+            {/* FLOATING MAGIC SPARKS (Yellow-White glow points instead of fire embers) */}
             <points ref={particlesRef}>
                 <bufferGeometry>
                     <bufferAttribute
@@ -260,10 +276,10 @@ const CheveresModel: React.FC<CheveresModelProps> = ({ scrollFraction, mouse }) 
                     />
                 </bufferGeometry>
                 <pointsMaterial
-                    color={0xff7a00} // Vibrant orange-gold sparks
-                    size={0.07}
+                    color={0xfff2b2} // Light cheese yellow glow
+                    size={0.06}
                     transparent
-                    opacity={0.8}
+                    opacity={0.7}
                 />
             </points>
         </group>
@@ -291,7 +307,7 @@ const CheveresScene: React.FC<CheveresSceneProps> = ({ scrollFraction, mouse }) 
                     shadow-mapSize-width={1024} 
                     shadow-mapSize-height={1024} 
                 />
-                <directionalLight position={[-5, -4, 2]} intensity={0.9} color="#ff7a00" />
+                <directionalLight position={[-5, -4, 2]} intensity={0.9} color="#ffffff" />
                 
                 <CheveresModel scrollFraction={scrollFraction} mouse={mouse} />
             </Canvas>
