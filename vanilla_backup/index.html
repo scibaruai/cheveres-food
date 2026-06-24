@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chéveres Food | Pasabocas 100% Artesanales | Palmira</title>
+  <!-- SEO Meta Tags -->
+  <meta name="description"
+    content="Descubre los mejores tequeños, pastelitos y empanadas 100% artesanales en Palmira. Disfrútalos listos o llévalos congelados a casa.">
+  <meta name="keywords"
+    content="tequeños, pasabocas, palmira, empanadas, comida artesanal, cheveres food, pastelitos, congelados">
+  <!-- Favicon -->
+  <link rel="icon" href="Logo.jpg" type="image/png">
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&family=Inter:wght@300;400;600&display=swap"
+    rel="stylesheet">
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <!-- Custom Cursor -->
+  <div class="custom-cursor" id="custom-cursor"></div>
+  <div class="custom-cursor-dot" id="custom-cursor-dot"></div>
+
+  <!-- Navbar -->
+  <header class="navbar" id="navbar">
+    <div class="navbar-container">
+      <a href="#" class="logo-link">
+        <img src="Logo.jpg" alt="Chéveres Food" class="logo-img">
+        <span class="logo-text">Chéveres <span class="accent-orange">Food</span></span>
+      </a>
+      <nav class="nav-menu">
+        <a href="#menu" class="nav-item">Menú</a>
+        <a href="#sedes" class="nav-item">Sedes</a>
+        <a href="#horarios" class="nav-item">Horarios</a>
+        <a href="#reseñas" class="nav-item">Reseñas</a>
+        <a href="https://wa.me/573166325650" target="_blank" class="nav-btn">
+          <i class="fab fa-whatsapp"></i> Pedir Domicilio
+        </a>
+      </nav>
+      <button class="mobile-toggle" id="mobile-toggle">
+        <i class="fas fa-bars"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-container">
+      <div class="hero-content">
+        <div class="tagline">
+          <span class="tag-dot"></span> 100% Productos Artesanales
+        </div>
+        <h1 class="hero-title">
+          Pasabocas que <br>
+          <span class="text-gradient">Encienden</span> tus Sentidos
+        </h1>
+        <p class="hero-subtitle">
+          Tequeños crujientes con queso súper elástico, pastelitos y empanadas doradas preparadas al instante o en
+          formato congelado para disfrutar cuando quieras.
+        </p>
+        <div class="hero-actions">
+          <a href="#menu" class="btn btn-primary">Ver Menú Carta</a>
+          <a href="https://wa.me/573166325650" target="_blank" class="btn btn-secondary">
+            <i class="fab fa-whatsapp"></i> WhatsApp Domicilios
+          </a>
+        </div>
+        <div class="hero-stats">
+          <div class="stat-item">
+            <span class="stat-num">13.1K+</span>
+            <span class="stat-lbl">Seguidores Instagram</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <span class="stat-num">19.8K+</span>
+            <span class="stat-lbl">Seguidores TikTok</span>
+          </div>
+        </div>
+      </div>
+      <!-- Interactive ThreeJS Visual -->
+      <div class="hero-visual">
+        <div id="canvas-container" class="canvas-wrapper"></div>
+        <div class="interactive-hint">
+          <i class="fas fa-mouse-pointer"></i> Mueve el cursor para interactuar
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="features-section">
+    <div class="features-container">
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-pizza-slice"></i></div>
+        <h3>100% Fresco</h3>
+        <p>Preparamos tus pasabocas diariamente con ingredientes premium seleccionados.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-snowflake"></i></div>
+        <h3>Línea Congelados</h3>
+        <p>Lleva tus tequeños y empanadas congeladas para hornear o freír al instante en casa.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-truck"></i></div>
+        <h3>Domicilios Rápidos</h3>
+        <p>Llegamos a toda Palmira desde nuestras dos sedes de distribución.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Menu Section -->
+  <section class="menu-section" id="menu">
+    <div class="section-header">
+      <div class="section-tag">NUESTRA CARTA</div>
+      <h2 class="section-title">Antojos que Cautivan</h2>
+      <div class="menu-tabs">
+        <button class="tab-btn active" data-tab="listos">Listos para Comer</button>
+        <button class="tab-btn" data-tab="congelados">Congelados Chéveres</button>
+      </div>
+    </div>
+
+    <!-- Tab Contents -->
+    <div class="menu-grid" id="menu-grid">
+      <!-- Cards will render dynamically based on active tab -->
+    </div>
+  </section>
+
+  <!-- Sedes Section -->
+  <section class="sedes-section" id="sedes">
+    <div class="section-header">
+      <div class="section-tag">COBERTURA</div>
+      <h2 class="section-title">Nuestras Sedes en Palmira</h2>
+      <p class="section-desc">Visítanos o pide a la sede más cercana para que tu comida llegue en tiempo récord.</p>
+    </div>
+    <div class="sedes-container">
+      <div class="sede-card">
+        <div class="sede-badge">Principal</div>
+        <div class="sede-icon"><i class="fas fa-store"></i></div>
+        <h3>Sede 1: Centro / Centro-Sur</h3>
+        <p class="sede-address"><i class="fas fa-map-marker-alt"></i> Calle 23 # 20 - 05, Palmira</p>
+        <p class="sede-desc">Nuestra sede fundadora. El punto ideal para tardear, compartir y retirar tus pedidos recién
+          salidos de la freidora.</p>
+        <a href="https://maps.google.com/?q=Calle+23+20-05,+Palmira" target="_blank" class="sede-link">
+          Cómo Llegar <i class="fas fa-chevron-right"></i>
+        </a>
+      </div>
+      <div class="sede-card">
+        <div class="sede-badge badge-new">¡Nueva Sede!</div>
+        <div class="sede-icon"><i class="fas fa-pizza-slice"></i></div>
+        <h3>Sede 2: Norte / Nororiente</h3>
+        <p class="sede-address"><i class="fas fa-map-marker-alt"></i> Carrera 28 # 48A - 121, Palmira</p>
+        <p class="sede-desc">Inaugurada recientemente para ampliar nuestra cobertura. Optimizada para despachos rápidos
+          a todo el norte de la ciudad.</p>
+        <a href="https://maps.google.com/?q=Carrera+28+48A-121,+Palmira" target="_blank" class="sede-link">
+          Cómo Llegar <i class="fas fa-chevron-right"></i>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Horarios Section -->
+  <section class="horarios-section" id="horarios">
+    <div class="horarios-container">
+      <div class="horarios-content">
+        <div class="section-tag">OPERACIONES</div>
+        <h2 class="section-title">Horarios de Atención</h2>
+        <div class="horario-row">
+          <span>Lunes a Domingo</span>
+          <span class="highlight-orange">4:00 PM – 10:00 PM</span>
+        </div>
+        <div class="horario-row closed-day">
+          <span>Miércoles</span>
+          <span class="badge-closed"><i class="fas fa-lock"></i> Cerrado🔒</span>
+        </div>
+        <p class="horario-note">
+          *Nuestros productos se preparan artesanalmente a diario. Recomendamos realizar tu pedido temprano para
+          asegurar disponibilidad.
+        </p>
+      </div>
+      <div class="horarios-image-card">
+        <div class="glow-bg"></div>
+        <div class="image-placeholder">
+          <!-- Premium styled logo graphic -->
+          <div class="logo-large">🧡</div>
+          <h3>Chéveres Food</h3>
+          <p>Pasabocas con Amor</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Reviews Section -->
+  <section class="reviews-section" id="reseñas">
+    <div class="section-header">
+      <div class="section-tag">TESTIMONIOS</div>
+      <h2 class="section-title">Lo que dicen nuestros clientes</h2>
+    </div>
+    <div class="reviews-container">
+      <div class="review-card">
+        <div class="stars">★★★★★</div>
+        <p class="review-text">"Los mejores tequeños de Palmira, el queso es increíble y la salsa de ajo es
+          espectacular. ¡Siempre pido para mis reuniones!"</p>
+        <div class="review-author">
+          <span class="author-avatar">🧡</span>
+          <div class="author-info">
+            <h4>Camila Restrepo</h4>
+            <span>Cliente Frecuente</span>
+          </div>
+        </div>
+      </div>
+      <div class="review-card">
+        <div class="stars">★★★★★</div>
+        <p class="review-text">"Los pastelitos de carne y queso siempre llegan súper calientes y crocantes. El servicio
+          a domicilio por WhatsApp responde al instante."</p>
+        <div class="review-author">
+          <span class="author-avatar">🥟</span>
+          <div class="author-info">
+            <h4>Mateo Gómez</h4>
+            <span>Cliente Sede Norte</span>
+          </div>
+        </div>
+      </div>
+      <div class="review-card">
+        <div class="stars">★★★★★</div>
+        <p class="review-text">"Compré tres bandejas de tequeños y empanadas congeladas para el cumpleaños de mi hija y
+          fue un éxito rotundo. Sencillos de preparar y deliciosos."</p>
+        <div class="review-author">
+          <span class="author-avatar">🔥</span>
+          <div class="author-info">
+            <h4>Valentina Muñoz</h4>
+            <span>Cliente de Congelados</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Call to Action Banner -->
+  <section class="cta-section">
+    <div class="cta-container">
+      <h2>¿Listo para calmar tu antojo?</h2>
+      <p>Pide a domicilio o pregunta por nuestros paquetes de pasabocas para tus fiestas y reuniones.</p>
+      <a href="https://wa.me/573166325650" target="_blank" class="btn btn-primary btn-large">
+        <i class="fab fa-whatsapp"></i> Chatear por WhatsApp
+      </a>
+      <div class="cta-phone">
+        O llámanos directamente al: <span class="highlight-number">316 632 5650</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-info">
+        <div class="footer-logo">
+          <img src="Logo.jpg" alt="Chéveres Food" class="footer-logo-img">
+          <span>Chéveres Food</span>
+        </div>
+        <p>Elaboración de pasabocas 100% artesanales. Dedicación en cada detalle para encender tus sentidos.</p>
+      </div>
+      <div class="footer-links">
+        <h4>Enlaces Rápidos</h4>
+        <a href="#menu">Menú</a>
+        <a href="#sedes">Sedes</a>
+        <a href="#horarios">Horarios</a>
+        <a href="#reseñas">Reseñas</a>
+      </div>
+      <div class="footer-socials">
+        <h4>Síguenos</h4>
+        <div class="social-icons">
+          <a href="https://www.instagram.com/cheveresfood.co/" target="_blank" aria-label="Instagram"><i
+              class="fab fa-instagram"></i></a>
+          <a href="https://www.tiktok.com/@cheveresfood.co" target="_blank" aria-label="TikTok"><i
+              class="fab fa-tiktok"></i></a>
+          <a href="https://www.facebook.com/cheveresfood.co/" target="_blank" aria-label="Facebook"><i
+              class="fab fa-facebook-f"></i></a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 Chéveres Food. Todos los derechos reservados. Diseñado para demostración.</p>
+    </div>
+  </footer>
+
+  <!-- Floating WhatsApp Button -->
+  <a href="https://wa.me/573166325650" target="_blank" class="floating-whatsapp" aria-label="Pedir por WhatsApp">
+    <i class="fab fa-whatsapp"></i>
+    <span class="whatsapp-tooltip">¡Ordena ya!</span>
+  </a>
+
+  <!-- CDN scripts -->
+  <!-- GSAP for scroll animations -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <!-- Three.js for 3D elements -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r147/three.min.js"></script>
+  <!-- Main Script -->
+  <script src="app.js?v=4"></script>
+</body>
+
+</html>
