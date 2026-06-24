@@ -401,8 +401,8 @@ button {
 
 /* --- BRAND HISTORY/ESENCIA PANEL --- */
 #historia.panel {
-    background-color: var(--card-bg);
-    color: var(--text-light);
+    background-color: var(--white);
+    color: #000000;
     padding: 80px 2rem 2rem 2rem;
 }
 
@@ -427,7 +427,7 @@ button {
 }
 
 .history-badge {
-    background-color: rgba(255, 111, 0, 0.12);
+    background-color: rgba(255, 85, 0, 0.1);
     color: var(--accent-orange);
     display: inline-flex;
     align-items: center;
@@ -441,7 +441,7 @@ button {
 
 .history-desc {
     font-size: 1.05rem;
-    color: var(--text-muted);
+    color: #333333;
     line-height: 1.6;
     margin-bottom: 1.5rem;
 }
@@ -452,11 +452,11 @@ button {
 }
 
 .history-photo-card {
-    background-color: var(--bg-dark);
+    background-color: #000000;
     padding: 1rem 1rem 1.8rem 1rem;
     border-radius: var(--border-radius-md);
     box-shadow: var(--card-shadow);
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(0, 0, 0, 0.1);
     transform: rotate(2deg);
     transition: var(--transition-smooth);
     max-width: 440px;
@@ -550,6 +550,8 @@ button {
     padding: 8rem 2rem;
     position: relative;
     z-index: 10;
+    background-color: var(--white);
+    color: #000000;
 }
 
 .section-header-centered {
@@ -565,7 +567,7 @@ button {
 
 .section-subtitle {
     font-size: 1.05rem;
-    color: var(--text-muted);
+    color: #444444;
     margin-bottom: 2rem;
 }
 
@@ -578,9 +580,9 @@ button {
 }
 
 .day-tab {
-    background-color: var(--card-bg);
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    color: var(--text-muted);
+    background-color: #000000;
+    border: 1px solid #000000;
+    color: var(--white);
     padding: 0.85rem 2rem;
     border-radius: 50px;
     font-weight: 700;
@@ -588,15 +590,16 @@ button {
 }
 
 .day-tab:hover {
-    color: var(--text-light);
-    border-color: var(--accent-orange);
+    background-color: #1a1a1a;
+    border-color: #1a1a1a;
+    color: var(--white);
 }
 
 .day-tab.active {
     background-color: var(--accent-orange);
-    color: var(--text-light);
+    color: var(--white);
     border-color: var(--accent-orange);
-    box-shadow: 0 4px 15px rgba(255, 111, 0, 0.35);
+    box-shadow: 0 4px 15px rgba(255, 85, 0, 0.35);
 }
 
 .menu-grid-wrapper {
@@ -612,8 +615,8 @@ button {
 
 /* 4 Items Combo layout handles nicely with auto-fill or 3-column wrap */
 .menu-card {
-    background-color: var(--card-bg);
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    background-color: #000000;
+    border: 1px solid rgba(0, 0, 0, 0.15);
     border-radius: var(--border-radius-lg);
     overflow: hidden;
     box-shadow: var(--card-shadow);
@@ -626,8 +629,8 @@ button {
 }
 
 .menu-card:hover {
-    border-color: rgba(255, 111, 0, 0.35);
-    box-shadow: 0 15px 45px rgba(0, 0, 0, 0.7);
+    border-color: var(--accent-orange);
+    box-shadow: 0 15px 45px rgba(0, 0, 0, 0.75);
 }
 
 .menu-image {
@@ -828,9 +831,10 @@ button {
 /* --- HORARIOS & OPERATIONS SECTION --- */
 .horarios-section {
     padding: 8rem 2rem;
-    background-color: rgba(35, 23, 19, 0.2);
-    border-top: 1px solid rgba(255, 255, 255, 0.03);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    background-color: var(--white);
+    color: #000000;
+    border-top: none;
+    border-bottom: none;
     position: relative;
     z-index: 10;
 }
@@ -853,23 +857,23 @@ button {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
     padding: 1.2rem 0;
     font-size: 1.15rem;
     font-weight: 600;
 }
 
 .horario-row.closed-day {
-    color: var(--text-muted);
+    color: #777777;
 }
 
 .highlight-orange {
     color: var(--accent-orange);
-    text-shadow: 0 0 10px rgba(255, 111, 0, 0.2);
+    text-shadow: none;
 }
 
 .badge-closed {
-    background-color: rgba(239, 68, 68, 0.12);
+    background-color: rgba(239, 68, 68, 0.1);
     color: #ef4444;
     padding: 0.3rem 0.8rem;
     border-radius: 4px;
@@ -881,7 +885,7 @@ button {
 
 .horario-note {
     font-size: 0.88rem;
-    color: var(--text-muted);
+    color: #555555;
     margin-top: 2rem;
     font-style: italic;
 }
@@ -899,18 +903,19 @@ button {
     position: absolute;
     width: 320px;
     height: 320px;
-    background: radial-gradient(circle, rgba(255, 111, 0, 0.15) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(255, 85, 0, 0.1) 0%, transparent 70%);
     z-index: 0;
 }
 
 .image-placeholder {
-    background-color: var(--card-bg);
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    background-color: #000000;
+    border: 1px solid rgba(0, 0, 0, 0.15);
     border-radius: var(--border-radius-lg);
     padding: 3rem 2rem;
     width: 320px;
     text-align: center;
     box-shadow: var(--card-shadow);
+    color: var(--white);
     z-index: 2;
 }
 

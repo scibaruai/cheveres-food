@@ -100,6 +100,11 @@ const App: React.FC = () => {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
+    // Force R3F Canvas container to remeasure bounds during scroll-driven 3D transforms
+    useEffect(() => {
+        window.dispatchEvent(new Event('resize'));
+    }, [scrollFraction]);
+
     // Mouse coordinates tracker
     useEffect(() => {
         const handleMouseMove = (e: MouseEvent) => {

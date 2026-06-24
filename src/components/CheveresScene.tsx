@@ -7,6 +7,8 @@ interface CheveresModelProps {
     mouse: { x: number; y: number };
 }
 
+
+
 const CheveresModel: React.FC<CheveresModelProps> = ({ scrollFraction, mouse }) => {
     const groupRef = useRef<THREE.Group>(null);
     const upperGroupRef = useRef<THREE.Group>(null);
@@ -104,7 +106,6 @@ const CheveresModel: React.FC<CheveresModelProps> = ({ scrollFraction, mouse }) 
         // Animate upper group (top shell of pastelito)
         if (upperGroupRef.current) {
             upperGroupRef.current.position.y = 0.08 + targetSeparation * 1.35;
-            // Slight tilt as it separates
             upperGroupRef.current.rotation.z = targetSeparation * 0.15;
             upperGroupRef.current.rotation.x = targetSeparation * 0.08;
         }
@@ -293,24 +294,24 @@ interface CheveresSceneProps {
 
 const CheveresScene: React.FC<CheveresSceneProps> = ({ scrollFraction, mouse }) => {
     return (
-        <div style={{ width: '100%', height: '100%', outline: 'none' }}>
+        <div style={{ width: '100%', height: '100%', outline: 'none', position: 'relative' }}>
             <Canvas
                 shadows
                 camera={{ position: [0, 0.1, 5.5], fov: 45 }}
                 gl={{ antialias: true, alpha: true }}
             >
                 <ambientLight intensity={0.7} />
-                <directionalLight 
-                    position={[5, 8, 4]} 
-                    intensity={1.4} 
-                    castShadow 
-                    shadow-mapSize-width={1024} 
-                    shadow-mapSize-height={1024} 
-                />
-                <directionalLight position={[-5, -4, 2]} intensity={0.9} color="#ffffff" />
-                
-                <CheveresModel scrollFraction={scrollFraction} mouse={mouse} />
-            </Canvas>
+                    <directionalLight 
+                        position={[5, 8, 4]} 
+                        intensity={1.4} 
+                        castShadow 
+                        shadow-mapSize-width={1024} 
+                        shadow-mapSize-height={1024} 
+                    />
+                    <directionalLight position={[-5, -4, 2]} intensity={0.9} color="#ffffff" />
+                    
+                    <CheveresModel scrollFraction={scrollFraction} mouse={mouse} />
+                </Canvas>
         </div>
     );
 };
