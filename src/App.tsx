@@ -194,6 +194,9 @@ const App: React.FC = () => {
 
             // Master Pinned Scroll Timeline for Hero to Historia transition
             const tl = gsap.timeline({
+                onUpdate: () => {
+                    window.dispatchEvent(new Event('resize'));
+                },
                 scrollTrigger: {
                     trigger: '.panels-container',
                     start: 'top top',

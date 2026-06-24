@@ -5,8 +5,8 @@
 /* --- CSS VARIABLES (Design Tokens) --- */
 :root {
     --bg-dark: #050505;         /* Pure neutral black */
-    --card-bg: #121212;         /* Neutral dark card background */
-    --card-bg-hover: #1c1c1c;   /* Slightly lighter neutral on hover */
+    --card-bg: #ffffff;         /* Pure white card background */
+    --card-bg-hover: #f9f9f9;   /* Slightly off-white on hover */
     --accent-orange: #ff5500;   /* Very vibrant orange primary */
     --accent-orange-hover: #ff7722;
     --gold-cheese: #ffaa00;     /* Cheese gold yellow */
@@ -514,11 +514,11 @@ button {
 }
 
 .history-photo-card {
-    background-color: #000000;
+    background-color: #ffffff;
     padding: 1rem 1rem 1.8rem 1rem;
     border-radius: var(--border-radius-md);
-    box-shadow: var(--card-shadow);
-    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(0, 0, 0, 0.08);
     transform: rotate(2deg);
     transition: var(--transition-smooth);
     max-width: 440px;
@@ -563,19 +563,20 @@ button {
 
 .feature-card {
     background-color: var(--card-bg);
-    border: 1px solid rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(0, 0, 0, 0.08);
     border-radius: var(--border-radius-md);
     padding: 3rem 2.2rem;
     text-align: center;
-    box-shadow: var(--card-shadow);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
     transition: border-color 0.4s, box-shadow 0.4s;
     transform-style: preserve-3d;
     perspective: 1000px;
+    color: #050505;
 }
 
 .feature-card:hover {
     border-color: var(--accent-orange);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+    box-shadow: 0 15px 35px rgba(255, 85, 0, 0.15);
 }
 
 .feature-icon {
@@ -594,6 +595,7 @@ button {
     font-size: 1.5rem;
     margin-bottom: 0.8rem;
     transition: transform 0.4s;
+    color: #050505;
 }
 
 .feature-card:hover h3 {
@@ -602,7 +604,7 @@ button {
 
 .feature-card p {
     font-size: 0.92rem;
-    color: var(--text-muted);
+    color: #555555;
     transition: transform 0.4s;
 }
 
@@ -680,22 +682,23 @@ button {
 
 /* 4 Items Combo layout handles nicely with auto-fill or 3-column wrap */
 .menu-card {
-    background-color: #000000;
-    border: 1px solid rgba(0, 0, 0, 0.15);
+    background-color: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.08);
     border-radius: var(--border-radius-lg);
     overflow: hidden;
-    box-shadow: var(--card-shadow);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
     transition: var(--transition-smooth);
     display: flex;
     flex-direction: column;
     height: 480px;
     transform-style: preserve-3d;
     perspective: 1000px;
+    color: #050505;
 }
 
 .menu-card:hover {
     border-color: var(--accent-orange);
-    box-shadow: 0 15px 45px rgba(0, 0, 0, 0.75);
+    box-shadow: 0 15px 35px rgba(255, 85, 0, 0.12);
 }
 
 .menu-image {
@@ -745,11 +748,11 @@ button {
     font-size: 1.55rem;
     margin-bottom: 0.5rem;
     line-height: 1.2;
-    color: var(--text-light);
+    color: #050505;
 }
 
 .menu-content p {
-    color: var(--text-muted);
+    color: #555555;
     font-size: 0.88rem;
     margin-bottom: 1rem;
     line-height: 1.5;
@@ -763,8 +766,8 @@ button {
 }
 
 .menu-badge {
-    background-color: rgba(255, 183, 3, 0.12);
-    color: var(--gold-cheese);
+    background-color: rgba(255, 85, 0, 0.08);
+    color: var(--accent-orange);
     font-size: 0.72rem;
     font-weight: 700;
     padding: 0.2rem 0.6rem;
@@ -775,7 +778,7 @@ button {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
     padding-top: 1.2rem;
 }
 
@@ -786,9 +789,9 @@ button {
 }
 
 .btn-menu-order {
-    background-color: rgba(255, 111, 0, 0.1);
+    background-color: rgba(255, 85, 0, 0.08);
     border: 1px solid var(--accent-orange);
-    color: var(--text-light) !important;
+    color: var(--accent-orange) !important;
     padding: 0.5rem 1.2rem;
     border-radius: 50px;
     font-size: 0.85rem;
@@ -830,25 +833,27 @@ button {
 
 .sede-card {
     background-color: var(--card-bg);
-    border: 1px solid rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(0, 0, 0, 0.08);
     border-radius: var(--border-radius-lg);
     padding: 3rem 2.5rem;
     position: relative;
-    box-shadow: var(--card-shadow);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
     transition: var(--transition-smooth);
+    color: #050505;
 }
 
 .sede-card:hover {
     border-color: var(--accent-orange);
     transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(255, 85, 0, 0.15);
 }
 
 .sede-badge {
     position: absolute;
     top: 1.5rem;
     right: 1.5rem;
-    background-color: rgba(255, 255, 255, 0.08);
-    color: var(--text-muted);
+    background-color: rgba(0, 0, 0, 0.05);
+    color: #555555;
     padding: 0.3rem 0.8rem;
     border-radius: 4px;
     font-size: 0.72rem;
@@ -857,9 +862,9 @@ button {
 }
 
 .sede-badge.badge-new {
-    background-color: rgba(255, 111, 0, 0.15);
+    background-color: rgba(255, 85, 0, 0.1);
     color: var(--accent-orange);
-    border: 1px solid rgba(255, 111, 0, 0.25);
+    border: 1px solid rgba(255, 85, 0, 0.2);
 }
 
 .sede-icon {
@@ -876,7 +881,7 @@ button {
 .sede-address {
     font-weight: 600;
     font-size: 0.95rem;
-    color: var(--gold-cheese);
+    color: #d35400;
     margin-bottom: 1rem;
     display: flex;
     align-items: center;
@@ -884,7 +889,7 @@ button {
 }
 
 .sede-desc {
-    color: var(--text-muted);
+    color: #444444;
     font-size: 0.92rem;
     line-height: 1.5;
     margin-bottom: 2rem;
@@ -984,14 +989,14 @@ button {
 }
 
 .image-placeholder {
-    background-color: #000000;
-    border: 1px solid rgba(0, 0, 0, 0.15);
+    background-color: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.08);
     border-radius: var(--border-radius-lg);
     padding: 3rem 2rem;
     width: 320px;
     text-align: center;
-    box-shadow: var(--card-shadow);
-    color: var(--white);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    color: #050505;
     z-index: 2;
 }
 
@@ -1045,14 +1050,15 @@ button {
 
 .review-card {
     background-color: var(--card-bg);
-    border: 1px solid rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(0, 0, 0, 0.08);
     border-radius: var(--border-radius-lg);
     padding: 2.8rem 2.2rem;
-    box-shadow: var(--card-shadow);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
     transition: var(--transition-smooth);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    color: #050505;
 }
 
 .review-card:hover {
@@ -1068,7 +1074,7 @@ button {
 
 .review-text {
     font-size: 0.92rem;
-    color: var(--text-muted);
+    color: #444444;
     line-height: 1.6;
     margin-bottom: 2rem;
     font-style: italic;
@@ -1078,7 +1084,7 @@ button {
     display: flex;
     align-items: center;
     gap: 1rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
     padding-top: 1.2rem;
 }
 
@@ -1096,7 +1102,7 @@ button {
 
 .author-info h4 {
     font-size: 1.1rem;
-    color: var(--text-light);
+    color: #050505;
 }
 
 .author-info span {
