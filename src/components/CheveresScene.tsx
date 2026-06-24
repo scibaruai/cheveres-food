@@ -1,4 +1,4 @@
-import React, { useRef, useMemo } from 'react';
+import React, { useRef, useMemo, useState, useEffect } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 
@@ -11,279 +11,258 @@ interface CheveresModelProps {
 
 const CheveresModel: React.FC<CheveresModelProps> = ({ scrollFraction, mouse }) => {
     const groupRef = useRef<THREE.Group>(null);
-    const upperGroupRef = useRef<THREE.Group>(null);
-    const lowerGroupRef = useRef<THREE.Group>(null);
-    const cheesePullRef = useRef<THREE.Mesh>(null);
-    const particlesRef = useRef<THREE.Points>(null);
+    const upperBreadRef = useRef<THREE.Group>(null);
+    const lowerBreadRef = useRef<THREE.Group>(null);
+    const lettuceRef = useRef<THREE.Group>(null);
+    const cheeseRef = useRef<THREE.Group>(null);
+    const hamRef = useRef<THREE.Group>(null);
+    const tomatoRef = useRef<THREE.Group>(null);
 
-    // 1. Materials Configuration
-    const doughMat = useMemo(() => new THREE.MeshPhysicalMaterial({
-        color: 0xdf9a44,     // Warm golden fried dough
-        roughness: 0.45,
-        metalness: 0.02,
-        clearcoat: 0.6,
-        clearcoatRoughness: 0.2
+    // Create tomato texture once
+    const tomatoTexture = useMemo(() => {
+        const canvas = document.createElement('canvas');
+        canvas.width = 128;
+        canvas.height = 128;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return new THREE.Texture();
+
+        // Tomato red base
+        ctx.fillStyle = '#D32F2F';
+        ctx.beginPath();
+        ctx.arc(64, 64, 64, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Inside pulp pockets
+        ctx.fillStyle = '#B71C1C';
+        const pockets = 3;
+        for (let i = 0; i < pockets; i++) {
+            const startAngle = (i / pockets) * Math.PI * 2 + 0.25;
+            const endAngle = ((i + 1) / pockets) * Math.PI * 2 - 0.25;
+            ctx.beginPath();
+            ctx.moveTo(64, 64);
+            ctx.arc(64, 64, 50, startAngle, endAngle);
+            ctx.closePath();
+            ctx.fill();
+
+            // Seeds (Gold dots)
+            ctx.fillStyle = '#FFD700';
+            const midAngle = startAngle + (endAngle - startAngle) / 2;
+            const seedX = 64 + Math.cos(midAngle) * 34;
+            const seedY = 64 + Math.sin(midAngle) * 34;
+            ctx.beginPath();
+            ctx.arc(seedX, seedY, 3.5, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        // Inner core
+        ctx.fillStyle = '#E57373';
+        ctx.beginPath();
+        ctx.arc(64, 64, 16, 0, Math.PI * 2);
+        ctx.fill();
+
+        const texture = new THREE.CanvasTexture(canvas);
+        texture.needsUpdate = true;
+        return texture;
+    }, []);
+
+    // Materials Configuration
+    const breadMat = useMemo(() => new THREE.MeshPhysicalMaterial({
+        color: 0xB57C3E, // toasted golden-brown
+        roughness: 0.65,
+        metalness: 0.05,
+        clearcoat: 0.4,
+        clearcoatRoughness: 0.3
+    }), []);
+
+    const crumbMat = useMemo(() => new THREE.MeshStandardMaterial({
+        color: 0xFDF5E6, // cream slash interior
+        roughness: 0.9,
+        metalness: 0.0
+    }), []);
+
+    const lettuceMat = useMemo(() => new THREE.MeshPhysicalMaterial({
+        color: 0x2A5D3F, // organic forest green
+        roughness: 0.85,
+        metalness: 0.0,
+        clearcoat: 0.4
     }), []);
 
     const cheeseMat = useMemo(() => new THREE.MeshPhysicalMaterial({
-        color: 0xfff6cf,     // Mozzarella cheese color
-        roughness: 0.35,
-        metalness: 0.02,
+        color: 0xFFC72C, // Cheddar yellow
+        roughness: 0.25,
         clearcoat: 0.8,
-        clearcoatRoughness: 0.15
+        clearcoatRoughness: 0.1,
+        metalness: 0.02
     }), []);
 
-    // 2. Cheese cubes particles
-    const cubeCount = 12;
-    const cubeData = useMemo(() => {
-        const list = [];
-        for (let i = 0; i < cubeCount; i++) {
-            list.push({
-                pos: [
-                    (Math.random() - 0.5) * 5.5,
-                    (Math.random() - 0.5) * 5.5,
-                    (Math.random() - 0.5) * 3.5
-                ] as [number, number, number],
-                rotSpeed: [
-                    (Math.random() - 0.5) * 0.03,
-                    (Math.random() - 0.5) * 0.03
-                ] as [number, number],
-                driftSpeed: 0.15 + Math.random() * 0.35,
-            });
-        }
-        return list;
-    }, []);
+    const hamMat = useMemo(() => new THREE.MeshPhysicalMaterial({
+        color: 0xE89898, // pink ham
+        roughness: 0.45,
+        clearcoat: 0.25,
+        metalness: 0.01
+    }), []);
 
-    const cubesRef = useRef<Array<THREE.Mesh | null>>([]);
+    const tomatoMat = useMemo(() => new THREE.MeshPhysicalMaterial({
+        color: 0xCD5C5C,
+        map: tomatoTexture,
+        roughness: 0.18,
+        clearcoat: 0.95,
+        clearcoatRoughness: 0.08,
+        metalness: 0.05
+    }), [tomatoTexture]);
 
-    // 3. Sparkles particles setup (clean glowing white/yellow magic dots instead of fire embers)
-    const particleCount = 45;
-    const [particlePositions, particleVelocities] = useMemo(() => {
-        const positions = new Float32Array(particleCount * 3);
-        const velocities = new Float32Array(particleCount * 3);
-        for (let i = 0; i < particleCount; i++) {
-            const idx = i * 3;
-            positions[idx] = (Math.random() - 0.5) * 6; // X
-            positions[idx + 1] = (Math.random() - 0.5) * 6; // Y
-            positions[idx + 2] = (Math.random() - 0.5) * 4; // Z
-            velocities[idx + 1] = 0.006 + Math.random() * 0.015; // rise speed
-        }
-        return [positions, velocities];
-    }, []);
-
-    // 4. Crimp teeth calculations for round pastelito
-    const crimpCount = 36;
-    const crimps = useMemo(() => {
-        const list = [];
-        for (let i = 0; i < crimpCount; i++) {
-            const angle = (i / crimpCount) * Math.PI * 2;
-            const r = 0.95;
-            list.push({
-                x: Math.cos(angle) * r,
-                z: Math.sin(angle) * r,
-                rotationY: -angle
-            });
-        }
-        return list;
-    }, []);
-
-    // 5. Animation loop Hook
+    // Animate rotations and separation based on scroll and mouse
     useFrame((state) => {
-        const t = state.clock.getElapsedTime();
+        if (!groupRef.current) return;
 
-        // 1. Mouse cursor hover tilt & base rotation
-        if (groupRef.current) {
-            const targetRotY = t * 0.15 + mouse.x * 0.45;
-            const targetRotX = 0.2 + mouse.y * 0.35;
-            
-            groupRef.current.rotation.y += (targetRotY - groupRef.current.rotation.y) * 0.05;
-            groupRef.current.rotation.x += (targetRotX - groupRef.current.rotation.x) * 0.05;
+        // Hover tilt and smooth base rotation
+        const baseTiltX = 0.6;
+        const baseTiltZ = -0.4;
+
+        const targetRotX = baseTiltX + mouse.y * 0.4;
+        const targetRotY = state.clock.getElapsedTime() * 0.12 + mouse.x * 0.4;
+        const targetRotZ = baseTiltZ - scrollFraction * 0.6 + mouse.x * 0.2;
+
+        groupRef.current.rotation.x += (targetRotX - groupRef.current.rotation.x) * 0.05;
+        groupRef.current.rotation.y += (targetRotY - groupRef.current.rotation.y) * 0.05;
+        groupRef.current.rotation.z += (targetRotZ - groupRef.current.rotation.z) * 0.05;
+
+        // Interactive despiece: separation of bread and ingredients
+        const sep = 0.45 + scrollFraction * 0.95;
+
+        if (upperBreadRef.current) upperBreadRef.current.position.z = sep;
+        if (lowerBreadRef.current) lowerBreadRef.current.position.z = -sep;
+
+        // Distribute ingredients inside the gap dynamically based on scrollFraction
+        if (lettuceRef.current) lettuceRef.current.position.z = 0;
+        if (cheeseRef.current) cheeseRef.current.position.z = sep * (0.22 + scrollFraction * 0.25);
+        if (hamRef.current) hamRef.current.position.z = -sep * (0.22 + scrollFraction * 0.25);
+        if (tomatoRef.current) tomatoRef.current.position.z = sep * (0.45 + scrollFraction * 0.25);
+
+        // Scroll vertical parallax offset
+        groupRef.current.position.y = -scrollFraction * 1.5;
+    });
+
+    return (
+        <group ref={groupRef} rotation={[0.6, 0.5, -0.4]} scale={[1.2, 1.2, 1.2]}>
+            {/* UPPER BREAD (Top Baguette) */}
+            <group ref={upperBreadRef} position={[0, 0, 0.45]} scale={[1.4, 1.0, 0.7]}>
+                <mesh castShadow receiveShadow>
+                    <cylinderGeometry args={[0.52, 0.52, 2.5, 32]} />
+                    <primitive object={breadMat} attach="material" />
+                </mesh>
+                {/* Rounded Tips */}
+                <mesh position={[0, 1.25, 0]} castShadow>
+                    <sphereGeometry args={[0.52, 32, 16]} />
+                    <primitive object={breadMat} attach="material" />
+                </mesh>
+                <mesh position={[0, -1.25, 0]} castShadow>
+                    <sphereGeometry args={[0.52, 32, 16]} />
+                    <primitive object={breadMat} attach="material" />
+                </mesh>
+                {/* Crust Slashes (Grignes) */}
+                {Array.from({ length: 4 }).map((_, i) => (
+                    <mesh key={i} position={[0.15, -0.75 + i * 0.5, 0.49]} rotation={[0.2, 0, 0.65]}>
+                        <sphereGeometry args={[0.18, 16, 16]} />
+                        <primitive object={crumbMat} attach="material" />
+                    </mesh>
+                ))}
+            </group>
+
+            {/* LOWER BREAD (Bottom Baguette) */}
+            <group ref={lowerBreadRef} position={[0, 0, -0.45]} scale={[1.4, 1.0, 0.7]}>
+                <mesh castShadow receiveShadow>
+                    <cylinderGeometry args={[0.52, 0.52, 2.5, 32]} />
+                    <primitive object={breadMat} attach="material" />
+                </mesh>
+                <mesh position={[0, 1.25, 0]} castShadow>
+                    <sphereGeometry args={[0.52, 32, 16]} />
+                    <primitive object={breadMat} attach="material" />
+                </mesh>
+                <mesh position={[0, -1.25, 0]} castShadow>
+                    <sphereGeometry args={[0.52, 32, 16]} />
+                    <primitive object={breadMat} attach="material" />
+                </mesh>
+            </group>
+
+            {/* LETTUCE (Green wavy layers in XY plane) */}
+            <group ref={lettuceRef} position={[0, 0, 0]}>
+                {Array.from({ length: 4 }).map((_, i) => (
+                    <mesh key={i} position={[0.18 * (i % 2 === 0 ? 1 : -1), -0.8 + i * 0.55, 0]} rotation={[0, 0, 0.25 * (i % 2 === 0 ? 1 : -1)]}>
+                        <boxGeometry args={[1.45, 0.55, 0.03]} />
+                        <primitive object={lettuceMat} attach="material" />
+                    </mesh>
+                ))}
+            </group>
+
+            {/* CHEESE (Yellow squares flat in XY plane) */}
+            <group ref={cheeseRef} position={[0, 0, 0.15]}>
+                {Array.from({ length: 3 }).map((_, i) => (
+                    <mesh key={i} position={[0.15 * (i % 2 === 0 ? -1 : 1), -0.7 + i * 0.7, 0]} rotation={[Math.PI / 2, 0, 0.25 * (i - 1)]}>
+                        <boxGeometry args={[1.40, 0.02, 1.40]} />
+                        <primitive object={cheeseMat} attach="material" />
+                    </mesh>
+                ))}
+            </group>
+
+            {/* HAM (Pink sheets flat in XY plane) */}
+            <group ref={hamRef} position={[0, 0, -0.15]}>
+                {Array.from({ length: 2 }).map((_, i) => (
+                    <mesh key={i} position={[0.12 * (i % 2 === 0 ? 1 : -1), -0.5 + i * 1.0, 0]} rotation={[Math.PI / 2, 0, -0.15 + i * 0.3]}>
+                        <boxGeometry args={[1.35, 0.03, 1.35]} />
+                        <primitive object={hamMat} attach="material" />
+                    </mesh>
+                ))}
+            </group>
+
+            {/* TOMATOES (Red circular discs flat in XY plane) */}
+            <group ref={tomatoRef} position={[0, 0, 0.3]}>
+                {Array.from({ length: 3 }).map((_, i) => (
+                    <mesh key={i} position={[0.32 * (i % 2 === 0 ? 1 : -1), -0.75 + i * 0.75, 0]} rotation={[Math.PI / 2, 0, 0.2 * i]} castShadow>
+                        <cylinderGeometry args={[0.48, 0.48, 0.12, 24]} />
+                        <primitive object={tomatoMat} attach="material" />
+                    </mesh>
+                ))}
+            </group>
+        </group>
+    );
+};
+
+const DriftingParticles: React.FC = () => {
+    const pointsRef = useRef<THREE.Points>(null);
+    const count = 35;
+    const positions = useMemo(() => {
+        const positions = new Float32Array(count * 3);
+        for (let i = 0; i < count * 3; i += 3) {
+            positions[i] = (Math.random() - 0.5) * 8; // X
+            positions[i + 1] = (Math.random() - 0.5) * 8; // Y
+            positions[i + 2] = (Math.random() - 0.5) * 8; // Z
         }
+        return positions;
+    }, []);
 
-        // 2. Separation logic on scroll
-        const targetSeparation = Math.max(0.0, 1.0 - scrollFraction * 2.8);
-
-        // Animate upper group (top shell of pastelito)
-        if (upperGroupRef.current) {
-            upperGroupRef.current.position.y = 0.08 + targetSeparation * 1.35;
-            upperGroupRef.current.rotation.z = targetSeparation * 0.15;
-            upperGroupRef.current.rotation.x = targetSeparation * 0.08;
-        }
-
-        // Animate lower group (bottom shell of pastelito)
-        if (lowerGroupRef.current) {
-            lowerGroupRef.current.position.y = -0.08 - targetSeparation * 1.35;
-            lowerGroupRef.current.rotation.z = -targetSeparation * 0.15;
-            lowerGroupRef.current.rotation.x = -targetSeparation * 0.08;
-        }
-
-        // Animate cheese pull connecting the two halves
-        if (cheesePullRef.current) {
-            const currentSep = targetSeparation * 1.35;
-            if (currentSep > 0.05) {
-                cheesePullRef.current.visible = true;
-                
-                // Scale Y to match length between ends
-                const yLength = 0.16 + currentSep * 2.7;
-                cheesePullRef.current.scale.y = yLength;
-                
-                // Thin out X & Z based on stretch distance
-                const thinness = 1.0 / (1.0 + currentSep * 3.5);
-                cheesePullRef.current.scale.x = thinness * 0.85;
-                cheesePullRef.current.scale.z = thinness * 0.85;
-            } else {
-                cheesePullRef.current.visible = false;
-            }
-        }
-
-        // 3. Animate drifting cheese cubes
-        cubesRef.current.forEach((cube, i) => {
-            if (!cube) return;
-            const data = cubeData[i];
-            cube.position.y += data.driftSpeed * 0.008;
-            cube.position.x = data.pos[0] + Math.sin(t * data.driftSpeed) * 0.15;
-            cube.rotation.x += data.rotSpeed[0];
-            cube.rotation.y += data.rotSpeed[1];
-            
-            // Recycle
-            if (cube.position.y > 3) {
-                cube.position.y = -3;
-                cube.position.x = (Math.random() - 0.5) * 5.5;
-                data.pos[0] = cube.position.x;
-            }
-        });
-
-        // 4. Animate floating clean sparkles
-        if (particlesRef.current) {
-            const posAttr = particlesRef.current.geometry.attributes.position as THREE.BufferAttribute;
-            const positions = posAttr.array as Float32Array;
-            for (let i = 0; i < particleCount; i++) {
-                const idx = i * 3 + 1; // Y coordinate
-                positions[idx] += particleVelocities[idx];
-                if (positions[idx] > 3) {
-                    positions[idx] = -3; // Loop back
-                }
-            }
-            posAttr.needsUpdate = true;
-            particlesRef.current.rotation.y += 0.0008;
-        }
-
-        // Parallax height shift
-        if (groupRef.current) {
-            groupRef.current.position.y = 0.2 - scrollFraction * 1.2;
+    useFrame(() => {
+        if (pointsRef.current) {
+            pointsRef.current.rotation.y += 0.001;
+            pointsRef.current.rotation.x += 0.0005;
         }
     });
 
     return (
-        <group ref={groupRef} scale={[1.4, 1.4, 1.4]} rotation={[0.15, 0.4, -0.1]}>
-            {/* STRETCHY CHEESE PULL IN CENTER */}
-            <mesh ref={cheesePullRef} position={[0, 0, 0]} castShadow receiveShadow>
-                <cylinderGeometry args={[0.42, 0.42, 1.0, 32]} />
-                <primitive object={cheeseMat} attach="material" />
-            </mesh>
-
-            {/* UPPER PASTELITO HALF */}
-            <group ref={upperGroupRef}>
-                {/* Upper Puffed Dough Dome */}
-                <mesh position={[0, 0.04, 0]} scale={[1, 0.35, 1]} castShadow receiveShadow>
-                    <sphereGeometry args={[0.9, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2]} />
-                    <primitive object={doughMat} attach="material" />
-                </mesh>
-                
-                {/* Upper Rim Plate (Flat seal border) */}
-                <mesh position={[0, 0.02, 0]} castShadow receiveShadow>
-                    <cylinderGeometry args={[1.0, 1.0, 0.04, 32]} />
-                    <primitive object={doughMat} attach="material" />
-                </mesh>
-
-                {/* Upper Crimp teeth around border */}
-                {crimps.map((crimp, idx) => (
-                    <mesh 
-                        key={idx} 
-                        position={[crimp.x, 0.03, crimp.z]} 
-                        rotation={[0, crimp.rotationY, 0]}
-                        castShadow
-                    >
-                        <boxGeometry args={[0.05, 0.02, 0.08]} />
-                        <primitive object={doughMat} attach="material" />
-                    </mesh>
-                ))}
-
-                {/* Inner cheese showing at separation point */}
-                <mesh position={[0, -0.01, 0]} castShadow>
-                    <cylinderGeometry args={[0.42, 0.42, 0.05, 32]} />
-                    <primitive object={cheeseMat} attach="material" />
-                </mesh>
-            </group>
-
-            {/* LOWER PASTELITO HALF */}
-            <group ref={lowerGroupRef}>
-                {/* Lower Puffed Dough Dome */}
-                <mesh position={[0, -0.04, 0]} scale={[1, 0.35, 1]} castShadow receiveShadow>
-                    <sphereGeometry args={[0.9, 32, 16, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2]} />
-                    <primitive object={doughMat} attach="material" />
-                </mesh>
-
-                {/* Lower Rim Plate (Flat seal border) */}
-                <mesh position={[0, -0.02, 0]} castShadow receiveShadow>
-                    <cylinderGeometry args={[1.0, 1.0, 0.04, 32]} />
-                    <primitive object={doughMat} attach="material" />
-                </mesh>
-
-                {/* Lower Crimp teeth around border */}
-                {crimps.map((crimp, idx) => (
-                    <mesh 
-                        key={idx} 
-                        position={[crimp.x, -0.03, crimp.z]} 
-                        rotation={[0, crimp.rotationY, 0]}
-                        castShadow
-                    >
-                        <boxGeometry args={[0.05, 0.02, 0.08]} />
-                        <primitive object={doughMat} attach="material" />
-                    </mesh>
-                ))}
-
-                {/* Inner cheese showing at separation point */}
-                <mesh position={[0, 0.01, 0]} castShadow>
-                    <cylinderGeometry args={[0.42, 0.42, 0.05, 32]} />
-                    <primitive object={cheeseMat} attach="material" />
-                </mesh>
-            </group>
-
-            {/* DRIFTING CHEESE CUBES */}
-            {cubeData.map((cube, idx) => (
-                <mesh
-                    key={idx}
-                    ref={(el) => { cubesRef.current[idx] = el; }}
-                    position={cube.pos}
-                    castShadow
-                >
-                    <boxGeometry args={[0.13, 0.13, 0.13]} />
-                    <meshPhysicalMaterial
-                        color={0xffbe00} // Cheese yellow
-                        roughness={0.4}
-                        metalness={0.05}
-                        clearcoat={0.7}
-                    />
-                </mesh>
-            ))}
-
-            {/* FLOATING MAGIC SPARKS (Yellow-White glow points instead of fire embers) */}
-            <points ref={particlesRef}>
-                <bufferGeometry>
-                    <bufferAttribute
-                        attach="attributes-position"
-                        args={[particlePositions, 3]}
-                    />
-                </bufferGeometry>
-                <pointsMaterial
-                    color={0xfff2b2} // Light cheese yellow glow
-                    size={0.06}
-                    transparent
-                    opacity={0.7}
+        <points ref={pointsRef}>
+            <bufferGeometry>
+                <bufferAttribute
+                    attach="attributes-position"
+                    args={[positions, 3]}
                 />
-            </points>
-        </group>
+            </bufferGeometry>
+            <pointsMaterial
+                color={0xffaa00} // Orange gold particles
+                size={0.12}
+                transparent
+                opacity={0.6}
+            />
+        </points>
     );
 };
 
@@ -293,14 +272,47 @@ interface CheveresSceneProps {
 }
 
 const CheveresScene: React.FC<CheveresSceneProps> = ({ scrollFraction, mouse }) => {
+    const containerRef = useRef<HTMLDivElement>(null);
+    const [size, setSize] = useState({ width: 0, height: 0 });
+
+    useEffect(() => {
+        const updateSize = () => {
+            if (containerRef.current) {
+                setSize({
+                    width: containerRef.current.offsetWidth,
+                    height: containerRef.current.offsetHeight
+                });
+            }
+        };
+
+        // Measure initially
+        updateSize();
+
+        // Listen for layout changes (which are transform-independent)
+        if (typeof ResizeObserver !== 'undefined' && containerRef.current) {
+            const observer = new ResizeObserver(() => {
+                updateSize();
+            });
+            observer.observe(containerRef.current);
+            return () => observer.disconnect();
+        } else {
+            window.addEventListener('resize', updateSize);
+            return () => window.removeEventListener('resize', updateSize);
+        }
+    }, []);
+
+    const canvasProps = {
+        shadows: true,
+        camera: { position: [0, 0.1, 5.5], fov: 45 },
+        gl: { antialias: true, alpha: true },
+        size: size
+    } as any;
+
     return (
-        <div style={{ width: '100%', height: '100%', outline: 'none', position: 'relative' }}>
-            <Canvas
-                shadows
-                camera={{ position: [0, 0.1, 5.5], fov: 45 }}
-                gl={{ antialias: true, alpha: true }}
-            >
-                <ambientLight intensity={0.7} />
+        <div ref={containerRef} style={{ width: '100%', height: '100%', outline: 'none', position: 'relative' }}>
+            {size.width > 0 && size.height > 0 && (
+                <Canvas {...canvasProps}>
+                    <ambientLight intensity={0.7} />
                     <directionalLight 
                         position={[5, 8, 4]} 
                         intensity={1.4} 
@@ -308,10 +320,12 @@ const CheveresScene: React.FC<CheveresSceneProps> = ({ scrollFraction, mouse }) 
                         shadow-mapSize-width={1024} 
                         shadow-mapSize-height={1024} 
                     />
-                    <directionalLight position={[-5, -4, 2]} intensity={0.9} color="#ffffff" />
+                    <directionalLight position={[-5, -4, 2]} intensity={0.9} color="#ff5500" />
                     
                     <CheveresModel scrollFraction={scrollFraction} mouse={mouse} />
+                    <DriftingParticles />
                 </Canvas>
+            )}
         </div>
     );
 };

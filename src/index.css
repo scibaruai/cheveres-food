@@ -226,7 +226,7 @@ button {
     height: 100vh;
     overflow: hidden;
     perspective: 1500px;
-    background-color: var(--bg-dark);
+    background-color: var(--accent-orange);
 }
 
 .panel {
@@ -243,7 +243,16 @@ button {
     justify-content: center;
     align-items: center;
     padding-top: 80px; /* Shift content down for navbar */
-    background-color: var(--bg-dark);
+    background-color: var(--accent-orange);
+}
+
+#inicio.panel {
+    background-color: var(--accent-orange) !important;
+}
+
+#historia.panel {
+    background-color: #ffffff !important;
+    color: #050505 !important;
 }
 
 /* --- HERO SECTION --- */
@@ -252,6 +261,59 @@ button {
     display: flex;
     align-items: center;
     position: relative;
+    background-color: var(--accent-orange) !important;
+    color: #050505 !important;
+}
+
+.hero-section h1 {
+    color: #050505 !important;
+}
+
+.hero-section .orange-text {
+    color: #ffffff !important; /* White highlight on brand orange */
+}
+
+.hero-section .hero-description {
+    color: #1a1a1a !important;
+}
+
+.hero-section .tagline-badge {
+    background-color: rgba(255, 255, 255, 0.22) !important;
+    color: #ffffff !important;
+    border-color: rgba(255, 255, 255, 0.4) !important;
+}
+
+.hero-section .btn-primary {
+    background-color: #050505 !important;
+    color: #ffffff !important;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35) !important;
+}
+
+.hero-section .btn-primary:hover {
+    background-color: #1c1c1c !important;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5) !important;
+}
+
+.hero-section .btn-secondary-orange {
+    border-color: rgba(0, 0, 0, 0.4) !important;
+    color: #050505 !important;
+}
+
+.hero-section .btn-secondary-orange:hover {
+    background-color: rgba(0, 0, 0, 0.05) !important;
+    border-color: #050505 !important;
+}
+
+.hero-section .feature-item {
+    color: #050505 !important;
+}
+
+.hero-section .feature-item .icon-orange {
+    color: #ffffff !important;
+}
+
+.hero-section .scroll-indicator-text {
+    color: #1a1a1a !important;
 }
 
 .hero-content-container {
@@ -484,13 +546,16 @@ button {
 /* --- FEATURES SECTION --- */
 .features-section {
     padding: 7rem 2rem;
-    max-width: 1200px;
-    margin: 0 auto;
     position: relative;
     z-index: 10;
+    background-color: var(--accent-orange) !important;
+    color: #050505 !important;
+    width: 100%;
 }
 
 .features-container {
+    max-width: 1200px;
+    margin: 0 auto;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 2.5rem;
@@ -742,6 +807,17 @@ button {
     padding: 8rem 2rem;
     position: relative;
     z-index: 10;
+    background-color: var(--accent-orange) !important;
+    color: #050505 !important;
+    width: 100%;
+}
+
+.sedes-section .section-title {
+    color: #050505 !important;
+}
+
+.sedes-section .section-subtitle {
+    color: #1a1a1a !important;
 }
 
 .sedes-container {
@@ -946,6 +1022,17 @@ button {
     padding: 8rem 2rem;
     position: relative;
     z-index: 10;
+    background-color: var(--accent-orange) !important;
+    color: #050505 !important;
+    width: 100%;
+}
+
+.reviews-section .section-title {
+    color: #050505 !important;
+}
+
+.reviews-section .section-subtitle {
+    color: #1a1a1a !important;
 }
 
 .reviews-container {

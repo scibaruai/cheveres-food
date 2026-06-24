@@ -216,18 +216,18 @@ const App: React.FC = () => {
                 ease: 'none'
             }, 0)
             .to('.panels-container', {
-                backgroundColor: '#121212', // Neutral dark grey
+                backgroundColor: '#ffffff', // Transition to white (matches History)
                 ease: 'none'
             }, 0)
             .from('.history-text-side', { opacity: 0, y: 40, duration: 0.5 }, 0.3)
             .from('.history-visual-side', { opacity: 0, scale: 0.95, duration: 0.5 }, 0.3);
 
-            // Transition background color from pure black to slightly lighter dark grey when reaching Menu
+            // Transition background color from brand orange to pure white when reaching Menu
             gsap.fromTo(document.body, 
-                { backgroundColor: '#050505', color: '#ffffff' },
+                { backgroundColor: '#ff5500', color: '#050505' },
                 {
-                    backgroundColor: '#0f0f0f', // Neutral dark grey
-                    color: '#ffffff',
+                    backgroundColor: '#ffffff',
+                    color: '#050505',
                     scrollTrigger: {
                         trigger: '#menu',
                         start: 'top 60%',
