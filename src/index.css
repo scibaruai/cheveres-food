@@ -1349,14 +1349,53 @@ button {
 
 /* --- RESPONSIVE MEDIA QUERIES --- */
 @media (max-width: 968px) {
+    /* Stack Panels normally on mobile */
+    .panels-container {
+        height: auto !important;
+        overflow: visible !important;
+        perspective: none !important;
+    }
+    
+    .panel {
+        position: relative !important;
+        top: auto !important;
+        left: auto !important;
+        width: 100% !important;
+        height: auto !important;
+        min-height: auto !important;
+        overflow: visible !important;
+        display: flex !important;
+        flex-direction: column !important;
+        padding: 5rem 1.5rem 3rem 1.5rem !important;
+        transform: none !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+    }
+
+    #historia.panel {
+        background-color: var(--white) !important;
+    }
+
+    .hero-3d-side, #hero-3d-wrapper {
+        height: 450px !important;
+        margin-top: 1.5rem;
+    }
+
+    .history-container {
+        grid-template-columns: 1fr;
+        gap: 2.5rem;
+    }
+
     .hero-content-container {
         grid-template-columns: 1fr;
         text-align: center;
         gap: 2rem;
+        padding: 1rem 0;
     }
     
     .hero-text-side h1 {
-        font-size: 2.8rem;
+        font-size: 2.6rem;
+        line-height: 1.25;
     }
     
     .hero-description {
@@ -1430,6 +1469,11 @@ button {
 }
 
 @media (max-width: 768px) {
+    .hero-text-side h1 {
+        font-size: 2.1rem !important;
+        line-height: 1.25 !important;
+    }
+    
     .nav-links {
         display: none;
     }

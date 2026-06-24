@@ -174,7 +174,10 @@ const App: React.FC = () => {
     useEffect(() => {
         if (!mainRef.current) return;
 
-        const ctx = gsap.context(() => {
+        const mm = gsap.matchMedia(mainRef);
+
+        // 1. Desktop Panel animation
+        mm.add("(min-width: 969px)", () => {
             const panels = gsap.utils.toArray('.panel') as HTMLElement[];
 
             // Configure initial 3D transform origin for first 2 panels
@@ -221,7 +224,23 @@ const App: React.FC = () => {
             }, 0)
             .from('.history-text-side', { opacity: 0, y: 40, duration: 0.5 }, 0.3)
             .from('.history-visual-side', { opacity: 0, scale: 0.95, duration: 0.5 }, 0.3);
+        });
 
+        // 2. Mobile adjustments: Clear GSAP applied panel rotations so they stack normally
+        mm.add("(max-width: 968px)", () => {
+            const panels = gsap.utils.toArray('.panel') as HTMLElement[];
+            panels.forEach((panel) => {
+                gsap.set(panel, {
+                    clearProps: "all"
+                });
+            });
+            gsap.set('.panels-container', {
+                clearProps: "all"
+            });
+        });
+
+        // 3. Universal animations
+        mm.add("(min-width: 0px)", () => {
             // Transition background color from brand orange to pure white when reaching Menu
             gsap.fromTo(document.body, 
                 { backgroundColor: '#ff5500', color: '#050505' },
@@ -237,47 +256,50 @@ const App: React.FC = () => {
                 }
             );
 
-            // 3D Card Tilt effect
+            // 3D Card Tilt effect (Only on desktop / pointer devices)
             const cards = document.querySelectorAll('.menu-card, .feature-card, .review-card');
-            cards.forEach(card => {
-                const onMouseMove = (e: Event) => {
-                    const me = e as MouseEvent;
-                    const rect = card.getBoundingClientRect();
-                    const x = me.clientX - rect.left;
-                    const y = me.clientY - rect.top;
-                    const centerX = rect.width / 2;
-                    const centerY = rect.height / 2;
-                    
-                    const rotateX = ((centerY - y) / centerY) * 12;
-                    const rotateY = ((x - centerX) / centerX) * 12;
+            
+            // Only add tilt effect on devices with hover/pointer support
+            if (window.matchMedia("(hover: hover)").matches) {
+                cards.forEach(card => {
+                    const onMouseMove = (e: Event) => {
+                        const me = e as MouseEvent;
+                        const rect = card.getBoundingClientRect();
+                        const x = me.clientX - rect.left;
+                        const y = me.clientY - rect.top;
+                        const centerX = rect.width / 2;
+                        const centerY = rect.height / 2;
+                        const rotateX = ((centerY - y) / centerY) * 12;
+                        const rotateY = ((x - centerX) / centerX) * 12;
 
-                    gsap.to(card, {
-                        rotateX: rotateX,
-                        rotateY: rotateY,
-                        y: -8,
-                        scale: 1.02,
-                        transformPerspective: 1000,
-                        duration: 0.3,
-                        overwrite: "auto",
-                        ease: "power1.out"
-                    });
-                };
+                        gsap.to(card, {
+                            rotateX: rotateX,
+                            rotateY: rotateY,
+                            y: -8,
+                            scale: 1.02,
+                            transformPerspective: 1000,
+                            duration: 0.3,
+                            overwrite: "auto",
+                            ease: "power1.out"
+                        });
+                    };
 
-                const onMouseLeave = () => {
-                    gsap.to(card, {
-                        rotateX: 0,
-                        rotateY: 0,
-                        y: 0,
-                        scale: 1,
-                        duration: 0.5,
-                        overwrite: "auto",
-                        ease: "power3.out"
-                    });
-                };
+                    const onMouseLeave = () => {
+                        gsap.to(card, {
+                            rotateX: 0,
+                            rotateY: 0,
+                            y: 0,
+                            scale: 1,
+                            duration: 0.5,
+                            overwrite: "auto",
+                            ease: "power3.out"
+                        });
+                    };
 
-                card.addEventListener('mousemove', onMouseMove);
-                card.addEventListener('mouseleave', onMouseLeave);
-            });
+                    card.addEventListener('mousemove', onMouseMove);
+                    card.addEventListener('mouseleave', onMouseLeave);
+                });
+            }
 
             // Scroll reveals
             gsap.fromTo(".hero-text-side", 
@@ -347,7 +369,7 @@ const App: React.FC = () => {
                     ease: "power2.out"
                 }
             );
-        }, mainRef);
+        });
 
         const timer = setTimeout(() => {
             ScrollTrigger.refresh();
@@ -355,7 +377,7 @@ const App: React.FC = () => {
         }, 800);
 
         return () => {
-            ctx.revert();
+            mm.revert();
             clearTimeout(timer);
         };
     }, []);
