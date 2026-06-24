@@ -1408,7 +1408,9 @@ button {
     }
     
     .hero-features-list {
-        justify-content: center;
+        flex-wrap: wrap !important;
+        gap: 1.5rem !important;
+        justify-content: center !important;
     }
     
     .menu-grid {

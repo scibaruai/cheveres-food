@@ -239,11 +239,22 @@ interface CheveresSceneProps {
 }
 
 const CheveresScene: React.FC<CheveresSceneProps> = ({ scrollFraction, mouse }) => {
+    const [isMobile, setIsMobile] = React.useState(typeof window !== 'undefined' ? window.innerWidth < 768 : false);
+
+    React.useEffect(() => {
+        if (typeof window === 'undefined') return;
+        const handleResize = () => {
+            setIsMobile(window.innerWidth < 768);
+        };
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
     return (
         <div style={{ width: '100%', height: '100%', outline: 'none', position: 'relative' }}>
             <Canvas
                 shadows
-                camera={{ position: [0, 0.1, 5.5], fov: 45 }}
+                camera={{ position: [0, 0.1, isMobile ? 7.2 : 5.5], fov: 45 }}
                 gl={{ antialias: true, alpha: true }}
             >
                 <ambientLight intensity={0.7} />
