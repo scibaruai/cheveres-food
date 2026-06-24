@@ -416,7 +416,7 @@ button {
 
 .hero-3d-side {
     position: relative;
-    height: 520px;
+    height: 640px;
     width: 100%;
     display: flex;
     justify-content: center;
@@ -1334,7 +1334,7 @@ button {
         padding-top: 80px;
     }
     .hero-3d-side {
-        height: 400px;
+        height: 480px;
     }
     .hero-text-side h1 {
         font-size: 3rem;

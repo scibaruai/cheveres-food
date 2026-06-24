@@ -121,7 +121,7 @@ const CheveresModel: React.FC<CheveresModelProps> = ({ scrollFraction, mouse }) 
     });
 
     return (
-        <group ref={groupRef} rotation={[0.5, 0.4, -0.3]} scale={[1.3, 1.3, 1.3]}>
+        <group ref={groupRef} rotation={[0.5, 0.4, -0.3]} scale={[1.65, 1.65, 1.65]}>
             {/* LEFT HALF OF EMPANADA */}
             <group ref={leftHalfRef}>
                 <mesh castShadow receiveShadow>
